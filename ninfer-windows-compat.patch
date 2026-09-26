@@ -1,0 +1,120 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 6421db9..92ed3df 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -30,6 +30,8 @@ project(ninfer LANGUAGES C CXX CUDA)
+ # NINFER_SM120_NATIVE=ON to build the native routes instead.
+ option(NINFER_SM120_NATIVE
+        "On a 120a build, compile upstream's native routes instead of the mma.sync path" OFF)
++option(NINFER_SM120_FP8_NVFP4_FAST
++       "Build FP8/NVFP4 tensor-core fast routes on sm_120a" ON)
+ if(CMAKE_CUDA_ARCHITECTURES MATCHES "^(80|86|89)$" OR NOT NINFER_SM120_NATIVE)
+   set(NINFER_COMPAT_PATH ON)
+   add_compile_definitions(NINFER_SM8X_COMPAT=1)
+@@ -40,7 +42,7 @@ endif()
+ # them an NVFP4 weight has no route wider than 16 columns, so an NVFP4 artifact could not start, and
+ # FP8 weights prefill through their dequantizing A16 route. They are selected only by FP8 and NVFP4
+ # weights, so every other format keeps the path chosen above.
+-if(CMAKE_CUDA_ARCHITECTURES STREQUAL "120a")
++if(CMAKE_CUDA_ARCHITECTURES STREQUAL "120a" AND NINFER_SM120_FP8_NVFP4_FAST)
+   add_compile_definitions(NINFER_SM120_NVFP4=1 NINFER_SM120_FP8=1)
+ endif()
+ 
+diff --git a/src/ops/CMakeLists.txt b/src/ops/CMakeLists.txt
+index 24de918..ab1c60d 100644
+--- a/src/ops/CMakeLists.txt
++++ b/src/ops/CMakeLists.txt
+@@ -12,7 +12,7 @@ target_link_libraries(ninfer_ops PRIVATE CUDA::cublas)
+ # self-contained kernels therefore use a non-RDC archive and host launchers.
+ # The SM120 tensor-core qualifiers do not exist on sm_86/sm_89, so this fork does not create
+ # the archive there; family manifests add to it only when the target exists.
+-if(CMAKE_CUDA_ARCHITECTURES STREQUAL "120a")
++if(CMAKE_CUDA_ARCHITECTURES STREQUAL "120a" AND NINFER_SM120_FP8_NVFP4_FAST)
+   add_library(ninfer_nvfp4_non_rdc STATIC)
+   ninfer_internal_includes(ninfer_nvfp4_non_rdc)
+   ninfer_cuda_non_rdc_archive(ninfer_nvfp4_non_rdc)
+@@ -44,7 +44,7 @@ if(NINFER_COMPAT_PATH)
+   # tensor-core path to fall back to, so the owning translation units cannot be compiled there.
+   # The A16 dequantizing routes for both formats are kept and remain fully functional. A 120a build
+   # on this path keeps both (NINFER_SM120_FP8, NINFER_SM120_NVFP4).
+-  if(NOT CMAKE_CUDA_ARCHITECTURES STREQUAL "120a")
++  if(NOT CMAKE_CUDA_ARCHITECTURES STREQUAL "120a" OR NOT NINFER_SM120_FP8_NVFP4_FAST)
+     get_target_property(ninfer_ops_sources ninfer_ops SOURCES)
+     list(FILTER ninfer_ops_sources EXCLUDE REGEX "nvfp4/.+_w4a4\\.cu$")
+     list(FILTER ninfer_ops_sources EXCLUDE REGEX "fp8/.+_a8\\.cu$")
+@@ -55,6 +55,6 @@ if(NINFER_COMPAT_PATH)
+   endif()
+   target_compile_definitions(ninfer_ops PUBLIC NINFER_SM8X_COMPAT=1)
+ endif()
+-if(CMAKE_CUDA_ARCHITECTURES STREQUAL "120a")
++if(CMAKE_CUDA_ARCHITECTURES STREQUAL "120a" AND NINFER_SM120_FP8_NVFP4_FAST)
+   target_compile_definitions(ninfer_ops PUBLIC NINFER_SM120_NVFP4=1 NINFER_SM120_FP8=1)
+ endif()
+diff --git a/src/ops/sparse_moe/prefill/sparse_moe_prefill_kernels.cu b/src/ops/sparse_moe/prefill/sparse_moe_prefill_kernels.cu
+index 8159ac7..91064a1 100644
+--- a/src/ops/sparse_moe/prefill/sparse_moe_prefill_kernels.cu
++++ b/src/ops/sparse_moe/prefill/sparse_moe_prefill_kernels.cu
+@@ -1403,7 +1403,11 @@ struct Nvfp4SourceDivisorEpilogue {
+ Nvfp4SourceDivisorEpilogue nvfp4_divisor_epilogue(const Weight& weight) {
+     const int rows = weight.weight_divisor_rows;
+     if (rows == weight.n) { return {nullptr, 1.0F / weight.weight_scale_divisor, rows, -1}; }
+-    const int shift = (rows > 0 && (rows & (rows - 1)) == 0) ? __builtin_ctz(rows) : -1;
++    int shift = -1;
++    if (rows > 0 && (rows & (rows - 1)) == 0) {
++        shift = 0;
++        for (int stride = rows; stride > 1; stride >>= 1) { ++shift; }
++    }
+     return {static_cast<const float*>(weight.weight_divisors), 0.0F, rows, shift};
+ }
+ 
+diff --git a/src/runtime/CMakeLists.txt b/src/runtime/CMakeLists.txt
+index bf49ff1..e9f99d0 100644
+--- a/src/runtime/CMakeLists.txt
++++ b/src/runtime/CMakeLists.txt
+@@ -3,6 +3,24 @@
+ set(NINFER_DEVICE_PROFILES_FILE ${CMAKE_CURRENT_SOURCE_DIR}/engine/device_profiles.json)
+ set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${NINFER_DEVICE_PROFILES_FILE})
+ file(READ ${NINFER_DEVICE_PROFILES_FILE} NINFER_DEVICE_PROFILES_JSON)
++string(LENGTH "${NINFER_DEVICE_PROFILES_JSON}" NINFER_DEVICE_PROFILES_JSON_LENGTH)
++# MSVC rejects a single string literal above its 16 KiB limit. Emit smaller
++# raw-string append calls so the embedded profiles also compile on Windows.
++set(NINFER_DEVICE_PROFILES_APPEND "")
++set(_profile_offset 0)
++while(_profile_offset LESS NINFER_DEVICE_PROFILES_JSON_LENGTH)
++  math(EXPR _profile_remaining "${NINFER_DEVICE_PROFILES_JSON_LENGTH} - ${_profile_offset}")
++  if(_profile_remaining GREATER 8000)
++    set(_profile_chunk_length 8000)
++  else()
++    set(_profile_chunk_length ${_profile_remaining})
++  endif()
++  string(SUBSTRING "${NINFER_DEVICE_PROFILES_JSON}" ${_profile_offset}
++         ${_profile_chunk_length} _profile_chunk)
++  string(APPEND NINFER_DEVICE_PROFILES_APPEND
++         "        json.append(R\"ninfer_json(${_profile_chunk})ninfer_json\");\n")
++  math(EXPR _profile_offset "${_profile_offset} + ${_profile_chunk_length}")
++endwhile()
+ configure_file(engine/device_profiles_builtin.cpp.in
+                ${CMAKE_CURRENT_BINARY_DIR}/engine/device_profiles_builtin.cpp @ONLY)
+ 
+diff --git a/src/runtime/engine/device_profiles_builtin.cpp.in b/src/runtime/engine/device_profiles_builtin.cpp.in
+index 98168b1..6babda7 100644
+--- a/src/runtime/engine/device_profiles_builtin.cpp.in
++++ b/src/runtime/engine/device_profiles_builtin.cpp.in
+@@ -1,10 +1,16 @@
+ #include "runtime/engine/device_profiles_builtin.h"
++#include <string>
+ 
+ namespace ninfer::runtime {
+ 
+ // Generated from src/runtime/engine/device_profiles.json at configure time.
+ std::string_view compiled_device_route_profiles_json() {
+-    return R"ninfer_json(@NINFER_DEVICE_PROFILES_JSON@)ninfer_json";
++    static const std::string json = [] {
++        std::string json;
++        json.reserve(@NINFER_DEVICE_PROFILES_JSON_LENGTH@);
++@NINFER_DEVICE_PROFILES_APPEND@        return json;
++    }();
++    return json;
+ }
+ 
+ } // namespace ninfer::runtime

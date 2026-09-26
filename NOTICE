@@ -1,0 +1,38 @@
+Swift 1.5 Qwen3.8-27B
+Copyright 2026 UkisAI
+
+UkisAI's contribution (the "Swift Contribution") is licensed under the
+Swift Open License v1.0. See LICENSE.
+
+This model is a Derivative Work of Qwen3.8-27B
+  https://huggingface.co/Qwen/Qwen3.8-27B
+  Copyright 2026 Alibaba Cloud
+  Licensed under the Apache License, Version 2.0. See LICENSE-APACHE-2.0.
+
+Swift 1.5 continues UkisAI's Swift 1.0 model, itself a Qwen3.8-27B
+derivative. The full release incorporates the Qwen3.8-27B Base Model and
+UkisAI's Swift 1.0 and Swift 1.5 contributions.
+
+Changes made by UkisAI (Apache License 2.0, Section 4(b) change notice):
+  - model-*.safetensors, model.safetensors.index.json: the model weights from
+    Swift 1.0 were further adapted by UkisAI using additional post-training
+    methods.
+  - README.md: replaced. LICENSE and NOTICE added.
+  - All other files (config.json, generation_config.json, chat_template.jinja,
+    tokenizer.json, tokenizer_config.json, vocab.json, merges.txt,
+    preprocessor_config.json, video_preprocessor_config.json) are retained from
+    the parent model and remain available under Apache License, Version 2.0.
+
+SJF conversion notice (2026-09-27):
+  - The UkisAI GGUF named in README.md was converted to the WaveCut NInfer v3
+    container. The source weights were not retrained or re-quantized.
+  - A separate Windows compatibility patch and verification documents were
+    prepared for this distribution. See CONVERSION.md and BENCHMARK.md.
+  - This distribution is independent of, and is not endorsed by, the upstream
+    model or runtime authors.
+
+GSQ-RCO GGUF release changes by UkisAI:
+  - Swift 1.5 weights converted to mixed-precision GGUF files, using the
+    published ISTA-DASLab per-tensor allocation and Swift-specific refinement.
+  - Optional MTP-head packages, quantization metadata and evaluation records added.
+  - README.md adapted for this quantized release.

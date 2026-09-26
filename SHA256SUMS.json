@@ -1,0 +1,44 @@
+{
+  "model": {
+    "name": "SJF-Swift1.5-NInfer-GSQ-RCO-IQ3_S-MTP.ninfer",
+    "bytes": 12494820096,
+    "sha256": "152307059a0d9a7e31b9f9db63fd568d29160863c128bd92869d33d372ab0908"
+  },
+  "parts": [
+    {
+      "name": "SJF-Swift1.5-NInfer-GSQ-RCO-IQ3_S-MTP.ninfer.part01",
+      "bytes": 1887436800,
+      "sha256": "99faaf8fb7023479f91066abb8d239b58d9ff7c2b64a2fd8a1ed2c2583bb0d20"
+    },
+    {
+      "name": "SJF-Swift1.5-NInfer-GSQ-RCO-IQ3_S-MTP.ninfer.part02",
+      "bytes": 1887436800,
+      "sha256": "24c3c157cc3bb7bc20afb6fb66f9207404afd8bb803db4a0a224c394a786d59c"
+    },
+    {
+      "name": "SJF-Swift1.5-NInfer-GSQ-RCO-IQ3_S-MTP.ninfer.part03",
+      "bytes": 1887436800,
+      "sha256": "8b9b00ea753c5a622d75cc5aea007051eb5e22176d2d00263ae6f3de5b0d239b"
+    },
+    {
+      "name": "SJF-Swift1.5-NInfer-GSQ-RCO-IQ3_S-MTP.ninfer.part04",
+      "bytes": 1887436800,
+      "sha256": "d9a01abf36a4ce82952dabe8d2472af053ecb5c267a931bec37ebc5f1cb48a7e"
+    },
+    {
+      "name": "SJF-Swift1.5-NInfer-GSQ-RCO-IQ3_S-MTP.ninfer.part05",
+      "bytes": 1887436800,
+      "sha256": "c93d967efc1c470a9afdda6b3c7aeb08e4608c0826dbdd890019e08a29aea3c3"
+    },
+    {
+      "name": "SJF-Swift1.5-NInfer-GSQ-RCO-IQ3_S-MTP.ninfer.part06",
+      "bytes": 1887436800,
+      "sha256": "ba513717338406bbb53da64ec9887fda8e106f35e684a7d1326f59f35d1c088a"
+    },
+    {
+      "name": "SJF-Swift1.5-NInfer-GSQ-RCO-IQ3_S-MTP.ninfer.part07",
+      "bytes": 1170199296,
+      "sha256": "9d5820fdecdf02db7f1135e40eb303aafe94d976db6db2d9fea2fc2029d7d335"
+    }
+  ]
+}
