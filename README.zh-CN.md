@@ -24,16 +24,16 @@ python .\assemble_model.py --parts-dir . --output .\SJF-Swift1.5-NInfer-GSQ-RCO-
 
 **权重受 [Swift Open License v1.0](LICENSE) 约束，包含商业使用条件。**Qwen 基础模型许可证见 [LICENSE-APACHE-2.0](LICENSE-APACHE-2.0)，原始署名及转换说明见 [NOTICE](NOTICE)。NInfer 源码及相应补丁按 Apache 2.0 处理。请在使用、再分发前阅读许可原文。转换过程见 [CONVERSION.md](CONVERSION.md)。
 
-## 商用授权边界（重要）
+## 商业使用与授权
 
-再分发本次转换是许可允许的（Swift Open License v1.0 第 4 条），但必须随副本附带许可证、署名声明和 Qwen 基础模型许可证。
+**再分发。** 依据 [Swift Open License v1.0](LICENSE) 第 4 条，本转换版允许复制与再分发；每一份副本均须随附该许可证、[NOTICE](NOTICE) 中的署名声明，以及 Qwen 基础模型许可证（[Apache 2.0](LICENSE-APACHE-2.0)）。
 
-商业使用受同一许可第 5 条限制：
+**商业使用限制。** 依据该许可证第 5 条：任何实体，连同其控制、被控制或共同受控的实体，在最近一个完整财政年度的总收入**达到或超过 1,000,000 美元（US$1,000,000）**者，**不获**本许可证对其使用上述权重的商业授权。
 
-- 如果企业本身及其控制、被控制或共同受控的关联实体，**最近一个完整财年的总营收达到 100 万美元（US$1,000,000）及以上**，则**不在本许可的商用授权范围内**。
-- 超过该门槛的企业，可向许可方 **UkisAI** 申请单独的书面商用许可（Swift Enterprise License，联系：<https://ukisai.com/contact>）。**这项授权只有 UkisAI 能给。** 本发行版是由 "SJF" 发布的非官方转换版，**无权代授、转授或豁免**上游权重的商用许可；联系 SJF 不能替代这一步。
-- 未达门槛的企业，可按本许可进行商业使用；非营利与研究用途不受影响。
+**企业许可。** 超过该门槛的实体，须向许可方 **UkisAI** 申请单独的书面**企业许可（Swift Enterprise License）**。申请入口：<https://ukisai.com/contact> 。该许可**仅得由 UkisAI 授予**。本发行版及其维护者不是 UkisAI 的代理人：无权授予、再许可或豁免上游权重的任何商业权利，亦无权受理或批准该类申请。
 
-与权重许可分开说明：SJF 可提供**有偿的转换适配、部署、技术支持、托管服务**，也可对自行编写的新增部分（转换工具、`assemble_model.py`、Windows 兼容补丁、本文档）另行授权，这些新增内容按 Apache 2.0 授权。上述服务只覆盖 SJF 自己的工作，**不包含也不能包含**上游 Swift 权重或 Qwen 基础模型的商用许可。SJF 也可以**协助你准备并向 UkisAI 递交商用许可申请**，但**无权决定或代授**——批不批只由 UkisAI 决定。
+**门槛以下。** 未达门槛的实体，其商业使用依 Swift Open License v1.0 获得授权；非营利与科研用途不受该门槛限制。
 
-需要部署、技术支持，或需要协助递交授权申请，请在本仓库提 Issue 联系。
+**本发行版自身内容。** 格式转换工具、`assemble_model.py`、Windows 兼容补丁与本文档依 [Apache License 2.0](LICENSE-APACHE-2.0) 授权。
+
+**来源声明。** 本发行版是 UkisAI 的 Swift 1.5 权重的非官方格式转换，与 UkisAI、WaveCut、Alibaba Cloud 无隶属、赞助或背书关系。
