@@ -14,6 +14,20 @@ This is an **unofficial format conversion**, not a newly trained model or an off
 
 The weights remain subject to the [Swift Open License v1.0](LICENSE), including its commercial-use terms. The Qwen base model's [Apache 2.0 license](LICENSE-APACHE-2.0) and the source [NOTICE](NOTICE) are included. The NInfer code and the separate Windows patch are under Apache 2.0. Read the licenses before redistribution or commercial use.
 
+## Commercial use and authorization boundary
+
+Redistribution of this conversion is allowed by Section 4 of the Swift Open License v1.0: keep the license, the attribution notices, and the Qwen base-model license with any copy.
+
+Commercial use is limited by Section 5 of the same license:
+
+- An organization is **not licensed** for commercial use of the Swift weights under this license if its gross revenue — together with every entity that controls it, is controlled by it, or is under common control with it — was **US$1,000,000 or more in the most recently completed fiscal year**.
+- An organization above that threshold may obtain a separate written **Swift Enterprise License** from the Licensor, **UkisAI** (contact: <https://ukisai.com/contact>). **Only UkisAI can grant that permission.** This release is an unofficial conversion published under the name "SJF"; it **cannot grant, relicense, or waive** that upstream permission, and contacting SJF does not replace it.
+- Below the threshold, commercial use is permitted under this license; non-profit and research use is unaffected.
+
+Separately from the weights license, SJF can be engaged for paid **conversion, deployment, technical support, or managed-hosting** services, and can license additions it authored itself (the conversion tooling, `assemble_model.py`, the Windows compatibility patch, and this documentation), which are Apache-2.0. Those services cover SJF's own work only: they do **not** include and cannot include a commercial license for the upstream Swift weights or the Qwen base model.
+
+For deployment or support services, open an issue in this repository.
+
 ## Download and verify
 
 The model is distributed as ordered `.partNN` assets in the GitHub Release because it exceeds GitHub's per-asset limit. Download **all** parts into one directory, then run:
