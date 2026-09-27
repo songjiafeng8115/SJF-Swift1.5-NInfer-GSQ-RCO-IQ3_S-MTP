@@ -24,9 +24,9 @@ Commercial use is limited by Section 5 of the same license:
 - An organization above that threshold may obtain a separate written **Swift Enterprise License** from the Licensor, **UkisAI** (contact: <https://ukisai.com/contact>). **Only UkisAI can grant that permission.** This release is an unofficial conversion published under the name "SJF"; it **cannot grant, relicense, or waive** that upstream permission, and contacting SJF does not replace it.
 - Below the threshold, commercial use is permitted under this license; non-profit and research use is unaffected.
 
-Separately from the weights license, SJF can be engaged for paid **conversion, deployment, technical support, or managed-hosting** services, and can license additions it authored itself (the conversion tooling, `assemble_model.py`, the Windows compatibility patch, and this documentation), which are Apache-2.0. Those services cover SJF's own work only: they do **not** include and cannot include a commercial license for the upstream Swift weights or the Qwen base model.
+Separately from the weights license, SJF can be engaged for paid **conversion, deployment, technical support, or managed-hosting** services, and can license additions it authored itself (the conversion tooling, `assemble_model.py`, the Windows compatibility patch, and this documentation), which are Apache-2.0. Those services cover SJF's own work only: they do **not** include and cannot include a commercial license for the upstream Swift weights or the Qwen base model. SJF can also **help you prepare and file a commercial-license request with UkisAI**, but it cannot decide or grant that request — that decision belongs to UkisAI alone.
 
-For deployment or support services, open an issue in this repository.
+For deployment, support, or help with a licensing request, open an issue in this repository.
 
 ## Download and verify
 
