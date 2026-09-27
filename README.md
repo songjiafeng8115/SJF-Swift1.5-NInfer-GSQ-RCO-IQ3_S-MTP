@@ -58,6 +58,8 @@ See [CONVERSION.md](CONVERSION.md) for the conversion record and [BENCHMARK.md](
 
 Three different, independently checked xhigh tasks were run on Windows / RTX 5090 with single concurrency, temperature 0, MTP 3, 262,144 configured context capacity, and 98,304 maximum output setting. The converted Swift + NInfer model answered all three correctly and averaged **230.6 output tokens/s** and **81.6 seconds per task** measured from request to completed response. Average output was 18,939 tokens per task. The complete per-task comparison with source Swift GGUF + llama.cpp and ordinary GSQ + NInfer is in [BENCHMARK.md](BENCHMARK.md).
 
+**Long-form writing caveat:** In two later DeepSeek Harness `medium` reasoning turns, pure decode speed was **149.4 and 151.7 tok/s**, and both responses missed a 5,000-Chinese-character request. One response incorrectly claimed it was about 5,200 characters. See [BENCHMARK.md](BENCHMARK.md#long-form-writing-observed-in-normal-use) for the actual counts and request conditions. The xhigh task mean is not a general writing-speed or instruction-following guarantee.
+
 The 256K setting was a capacity configuration, not a full 256K input test. The 96K output setting was an upper limit; no test generated 96K tokens continuously. The three-task result does not establish a fixed 400 tokens/s speed, 12 GB total VRAM use, or production stability.
 
 ## Changes from upstream

@@ -42,3 +42,14 @@ At configured 256K capacity, sampled whole-card GPU-memory peaks in the graph an
 The shortest-subarray task was also run two additional times per backend. Across those three same-task runs, average request time was 129.69 seconds for Swift GGUF + llama.cpp, 65.80 seconds for ordinary GSQ + NInfer, and 62.93 seconds for this release. Output token counts and checked answers were identical across those reruns. These repeated runs are excluded from the three-different-task mean above.
 
 The detailed local test report and machine-readable results were retained with the development workspace. This public summary excludes local filesystem paths and private system details.
+
+## Long-form writing observed in normal use
+
+On 2026-09-27, the same converted weights served two Chinese long-form writing turns through DeepSeek Harness at `medium` reasoning. These were not part of the controlled three-task benchmark. The backend recorded:
+
+| Turn | Prompt tokens | Output tokens | Total request time | Pure decode speed | MTP accepted | Finish |
+|---|---:|---:|---:|---:|---:|---|
+| First long-form continuation | 18,752 | 2,910 | 20.0 s | 149.4 tok/s | 33.5% | Stop token |
+| Second long-form continuation | 21,678 | 3,778 | 26.0 s | 151.7 tok/s | 35.2% | Stop token |
+
+The exact visible responses were 4,155 and 4,793 characters including whitespace and Markdown (4,002 and 4,594 non-whitespace characters). Both missed the 5,000-character request. The second response itself claimed approximately 5,200 characters; that claim was false. Both requests stopped naturally, far below the 98,304-token output limit. The requests included 37 tool definitions and a much longer conversation than the benchmark prompts. In the three controlled xhigh tasks, MTP acceptance was 64.0%–74.3%. These observations show that the benchmark's 230.6 effective tok/s average and task accuracy do not extend to long-form writing or strict length compliance. The different prompt, context, reasoning setting, and workload prevent attributing the slowdown to a single cause.

@@ -16,6 +16,8 @@ python .\assemble_model.py --parts-dir . --output .\SJF-Swift1.5-NInfer-GSQ-RCO-
 
 在 Windows / RTX 5090 上使用 WaveCut `ninfer-all` 提交 `8ed38f69670e7dfe2b5db18b1081a3b3085c4305` 和本仓库的 Windows 编译补丁。三道不同、已独立验对的 xhigh 题全部答对；MTP 3、温度 0、单并发条件下，平均每题输出 **18,939 Token**，耗时 **81.6 秒**，整请求平均输出速度 **230.6 Token/s**。逐题对照见 [BENCHMARK.md](BENCHMARK.md)。
 
+**长文使用边界：**后来在 DeepSeek Harness 的 `medium` 推理下，两次中文长文请求的纯解码速度只有 **149.4 / 151.7 Token/s**，两次都未达到要求的 5000 字；其中一次还错误地自报“约 5200 字”。原始回复去空白后分别只有 **4002 / 4594 字符**（含标点和 Markdown）。详见 [中文测试报告](BENCHMARK.zh-CN.md)。上述 xhigh 三题均速不能代表长文速度或字数遵循能力。
+
 256K 是已配置的上下文容量，尚未用真实 256K 输入填满；96K 是单次输出上限，尚未连续生成 96K。约 12.5 GB 是模型文件大小，不是整卡显存需求。两次任务采样的整卡显存峰值约 21.5 GiB；不能据此宣称 12 GB 显存可跑满 256K、稳定 400 Token/s 或生产级稳定。
 
 ## 来源与许可
